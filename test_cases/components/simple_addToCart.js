@@ -58,23 +58,9 @@ async function addToCart(I, category, productname) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //Adding Multiple Products to Cart With Different Sizes
 
-async function addToCartMultiple(I, category, productname) {
+async function addToCartMultiple(I, category, subcategories, productname) {
   I.say('Clicking "Kategorier"...');
   I.click(locate('.level-top.static-menu-item').withText('Kategorier'));
 
@@ -82,7 +68,10 @@ async function addToCartMultiple(I, category, productname) {
   I.click(category);
 
   I.say('Waiting for product grid to load...');
-  I.waitForElement('.columns', 10); 
+  I.waitForElement('.columns', 10);
+
+  I.say(`Clicking subcategory: ${subcategories}`);
+  I.click(locate('.subcategories-box').withText(subcategories));
 
   let productFound = false;
 
@@ -98,9 +87,15 @@ async function addToCartMultiple(I, category, productname) {
       I.click(locate('.product-item-link').withText(productname));
       productFound = true;
 
-      I.click(locate('#product-addtocart-button').withText('Læg i kurv'));
-        I.wait(5);
+      I.fillField('.wk-configurations-qty[data-attribute-position="115"]', '1');
+      I.wait(1);
+      I.fillField('.wk-configurations-qty[data-attribute-position="4"]', '1');
+      I.wait(1);
+      I.fillField('.wk-configurations-qty[data-attribute-position="6"]', '1');
+      I.wait(1);
 
+      I.click(locate('#product-addtocart-button').withText('Læg i kurv'));
+      I.wait(5);
 
     } else {
       I.say('Product not found yet. Checking for "Load More"...');
