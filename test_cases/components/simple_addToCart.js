@@ -55,9 +55,6 @@ async function addToCart(I, category, productname) {
   }
 };
 
-
-
-
 //Adding Multiple Products to Cart With Different Sizes
 
 async function addToCartMultiple(I, category, subcategories, productname) {
@@ -68,7 +65,7 @@ async function addToCartMultiple(I, category, subcategories, productname) {
   I.click(category);
 
   I.say('Waiting for product grid to load...');
-  I.waitForElement('.columns', 10);
+  I.waitForElement('.columns', 5);
 
   I.say(`Clicking subcategory: ${subcategories}`);
   I.click(locate('.subcategories-box').withText(subcategories));
@@ -88,11 +85,8 @@ async function addToCartMultiple(I, category, subcategories, productname) {
       productFound = true;
 
       I.fillField('.wk-configurations-qty[data-attribute-position="115"]', '1');
-      I.wait(1);
       I.fillField('.wk-configurations-qty[data-attribute-position="4"]', '1');
-      I.wait(1);
       I.fillField('.wk-configurations-qty[data-attribute-position="6"]', '1');
-      I.wait(1);
 
       I.click(locate('#product-addtocart-button').withText('Læg i kurv'));
       I.wait(5);
@@ -110,11 +104,11 @@ async function addToCartMultiple(I, category, subcategories, productname) {
           }
         });
 
-        I.wait(2);
+        I.wait(1);
 
         I.say('Clicking "Load More"...');
         I.click('.btn-load-more');
-        I.wait(4);
+        I.wait(3);
       } else {
         I.say(`No more products to load. Product "${productname}" not found.`);
         throw new Error(`Product "${productname}" not found.`);
