@@ -1,14 +1,69 @@
-// Shipping Method 1
-async function checkoutMethod1(I) {
-    I.say('Opening minicart...');
-    I.click('.action.showcart'); 
+//Opening Cart
+async function openCart(I) {
+    I.click('.action.showcart');
     I.wait(2);
 
-    I.say('Clicking "View Cart"...');
     I.click('.action.viewcart');
+}
+
+// Check Coupon Code
+async function checkCouponCode(I, couponCode) {
+    I.say(`Checking if coupon code "${couponCode}" is applied...`);
+    I.waitForElement('.cart-summary', 10);
+
+  // Check if the coupon code input field is present
+    const isCouponFieldVisible = await I.grabNumberOfVisibleElements('#coupon_code');
+    if (isCouponFieldVisible === 0) {
+        throw new Error('Coupon code input field not found.');
+    }
+
+  // Get current value of coupon field
+    const couponValue = await I.grabValueFrom('#coupon_code');
+    let shouldClickApply = false;
+
+    if (couponValue.trim() !== couponCode) {
+    I.fillField('#coupon_code', couponCode);
+    // Trigger input/change events using executeScript
+    await I.executeScript(() => {
+        const field = document.querySelector('#coupon_code');
+        if (field) {
+        field.dispatchEvent(new Event('input', { bubbles: true }));
+        field.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+    });
+    I.wait(1);
+    I.say(`Coupon set to ${couponCode}`);
+    shouldClickApply = true;
+    } else {
+    I.say(`Coupon already set to ${couponCode}`);
+    }
+
+  // Click Apply button if needed
+    if (shouldClickApply) {
+    // Use XPath to find the button
+    const applyBtnXPath = '//*[@id="discount-coupon-form"]/div/div[2]/div/button';
+    I.waitForElement(applyBtnXPath, 5);
+    I.scrollTo(applyBtnXPath);
+    I.click(applyBtnXPath);
+    I.say('Apply button clicked');
+    }
+}
+
+// ==================================================================================
+
+// Shipping Method GLSPakkeshop
+async function checkoutMethod1(I) {
+    const couponCode = '1902testqa';
+    const comment = 'this is a test order from 1902';
+
+    await openCart(I);
+    I.wait(2);
 
     I.say('Waiting for cart summary...');
     I.waitForElement('.cart-summary', 10);
+
+    await checkCouponCode(I, couponCode);
+    I.wait(3);
 
     I.say('Clicking "Proceed to Checkout"...');
     I.click('[data-role="proceed-to-checkout"]');
@@ -22,6 +77,27 @@ async function checkoutMethod1(I) {
     I.say('Filling parcelshop postcode...');
     I.fillField('#gls-parcelshop-postcode', '3000');
     I.wait(2);
+
+    I.executeScript(() => {
+        const select = document.querySelector('#gls-parcelshop-pickup-id');
+    if (select && select.options.length >= 3) {
+        select.selectedIndex = 2;
+        select.dispatchEvent(new Event('change'));
+    }
+});
+
+    I.fillField('#comments', comment);
+    I.wait(1);
+
+    I.click('#block-discount-heading');
+    I.wait(1);
+
+    I.click(locate('button.action.action-cancel').withText('Annuller rabatkode'));
+    i.wait(2);
+
+    //===================================================================================================
+
+
 
     I.say('Selecting Bambora payment method...');
     I.waitForElement('.label.bambora_payment_title', 10);
@@ -47,12 +123,6 @@ async function checkoutMethod1(I) {
 // ==================================================================================
 // Shipping Method 2
     async function checkoutMethod2(I) {
-    I.say('Opening minicart...');
-    I.click('.action.showcart'); 
-    I.wait(2);
-
-    I.say('Clicking "View Cart"...');
-    I.click('.action.viewcart');
 
     I.say('Waiting for cart summary...');
     I.waitForElement('.cart-summary', 10);
@@ -99,12 +169,6 @@ async function checkoutMethod1(I) {
 // ==================================================================================
 // Shipping Method 3
 async function checkoutMethod3(I) {
-    I.say('Opening minicart...');
-    I.click('.action.showcart'); 
-    I.wait(2);
-
-    I.say('Clicking "View Cart"...');
-    I.click('.action.viewcart');
 
     I.say('Waiting for cart summary...');
     I.waitForElement('.cart-summary', 10);
@@ -150,5 +214,6 @@ async function checkoutMethod3(I) {
 module.exports = {
     checkoutMethod1,
     checkoutMethod2,
-    checkoutMethod3
+    checkoutMethod3,
+    openCart
 };

@@ -10,6 +10,7 @@ Scenario('User logs in with valid credentials and Add item to cart', async ({ I 
     await loginCredentials(I, email, password);
     I.wait(2);
 
+    
     await checkoutMethod1(I)
 
 });

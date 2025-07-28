@@ -21,5 +21,8 @@
   "devDependencies": {
     "codeceptjs": "^3.7.3",
     "webdriverio": "^9.18.4"
+  },
+  "dependencies": {
+    "glob": "^11.0.3"
   }
 }

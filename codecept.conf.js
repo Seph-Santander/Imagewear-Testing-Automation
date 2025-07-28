@@ -20,5 +20,9 @@ exports.config = {
   include: {
     I: './steps_file.js'
   },
-  name: 'Imagewear-Testing-Automation'
+  name: 'Imagewear-Testing-Automation',
+  custom: {
+    email: 'nineteen02merry@gmail.com',
+    password: 'merry@190200'
+  }
 }
