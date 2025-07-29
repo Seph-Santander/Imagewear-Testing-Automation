@@ -9,8 +9,8 @@ async function openCart(I) {
 // Check Coupon Code
 // test_cases/components/checkouts.js
 
-async function checkCouponCode(I) {
-  const COUPON_CODE = '1902testqa';
+async function checkCouponCode(I, couponCode) {
+  const COUPON_CODE = couponCode;
 
   I.say('Expanding discount section...');
   await I.waitForElement('#block-discount-heading', 10);
@@ -73,69 +73,88 @@ async function checkCouponCode(I) {
   }
 }
 
+//apply Discount in Checkout
+
+async function applyDiscount(I, couponCode) {
+  I.say(`DEBUG: Applying discount code "${couponCode}" to #discount-code`);
+  await I.waitForElement('#discount-code', 10);
+  await I.fillField('#discount-code', couponCode);
+}
+
+// Utility function to scroll an element to center of the screen
+async function scrollToCenter(I, selector) {
+  await I.executeScript((sel) => {
+    const el = document.querySelector(sel);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, selector);
+}
 
 // ==================================================================================
 
 // Shipping Method GLSPakkeshop
-async function checkoutMethod1(I) {
-    const couponCode = '1902testqa';
-    const comment = 'this is a test order from 1902';
-
-    await openCart(I);
-    I.wait(2);
-
-    I.say('Waiting for cart summary...');
-    I.waitForElement('.cart-summary', 10);
-
-    await checkCouponCode(I);
-    I.wait(3);
-
+async function checkoutMethod1(I, comment) {
     I.say('Clicking "Proceed to Checkout"...');
     I.click('[data-role="proceed-to-checkout"]');
     I.wait(5);
 
     I.say('Selecting GLS Parcelshop shipping method...');
-    I.waitForElement('#s_method_gls_parcelshop_e_1', 10);
+    await I.waitForElement('#s_method_gls_parcelshop_e_1', 10);
+    await scrollToCenter(I, '#s_method_gls_parcelshop_e_1');
     I.checkOption('#s_method_gls_parcelshop_e_1');
     I.wait(5);
 
     I.say('Filling parcelshop postcode...');
+    await scrollToCenter(I, '#gls-parcelshop-postcode');
     I.fillField('#gls-parcelshop-postcode', '3000');
     I.wait(2);
 
     I.executeScript(() => {
         const select = document.querySelector('#gls-parcelshop-pickup-id');
-    if (select && select.options.length >= 3) {
-        select.selectedIndex = 2;
-        select.dispatchEvent(new Event('change'));
-    }
-});
+        if (select && select.options.length >= 3) {
+            select.selectedIndex = 2;
+            select.dispatchEvent(new Event('change'));
+        }
+    });
 
+    await scrollToCenter(I, '#comments');
     I.fillField('#comments', comment);
     I.wait(1);
 
+    await scrollToCenter(I, '#block-discount-heading');
     I.click('#block-discount-heading');
     I.wait(1);
 
+    await scrollToCenter(I, 'button.action.action-cancel');
     I.click(locate('button.action.action-cancel').withText('Annuller rabatkode'));
-    i.wait(2);
+    I.wait(2);
+
+    await applyDiscount(I, '1902testqa');
+    I.wait(2);
+
+    await scrollToCenter(I, '#discount-code');
+    await I.click(locate('button.action.action-apply').withText('Anvend rabatkode'));
+    I.wait(2);
+
+    await I.waitForElement('th.mark span.discount.coupon', 10);
+    I.say('Coupon code applied successfully.');
 
     //==============================================================================================================
 
-
-
     I.say('Selecting Bambora payment method...');
+    await scrollToCenter(I, '.label.bambora_payment_title');
     I.waitForElement('.label.bambora_payment_title', 10);
     I.click('.label.bambora_payment_title');
     I.wait(3); 
 
     I.say('Agreeing to terms...');
+    await scrollToCenter(I, '#agreement__1');
     I.waitForElement('#agreement__1', 10);
     I.waitForVisible('#agreement__1', 5);
     I.checkOption('#agreement__1');
     I.wait(2);
 
     I.say('Clicking "Place Order"... using JS click()');
+    await scrollToCenter(I, '.place-order-primary button');
     I.waitForElement('.place-order-primary button', 10);
     I.executeScript(() => {
         const button = document.querySelector('.place-order-primary button');
@@ -143,8 +162,20 @@ async function checkoutMethod1(I) {
             button.click();
         }
     });
-    I.wait(20);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 // ==================================================================================
 // Shipping Method 2
     async function checkoutMethod2(I) {
@@ -240,5 +271,8 @@ module.exports = {
     checkoutMethod1,
     checkoutMethod2,
     checkoutMethod3,
-    openCart
+    checkCouponCode,
+    applyDiscount,
+    openCart,
+    scrollToCenter
 };

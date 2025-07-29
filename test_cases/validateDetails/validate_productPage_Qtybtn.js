@@ -1,6 +1,5 @@
 const { loginCredentials } = require('../components/simple_userLogin');
 const { validateQuantityBtn } = require('../components/simple_addToCart');
-const { openCart } = require('../components/checkouts');
 
 Feature('Product Page Quantity Button Validation');
 
