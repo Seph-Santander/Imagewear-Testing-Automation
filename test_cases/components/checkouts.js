@@ -7,47 +7,72 @@ async function openCart(I) {
 }
 
 // Check Coupon Code
-async function checkCouponCode(I, couponCode) {
-    I.say(`Checking if coupon code "${couponCode}" is applied...`);
-    I.waitForElement('.cart-summary', 10);
+// test_cases/components/checkouts.js
 
-  // Check if the coupon code input field is present
-    const isCouponFieldVisible = await I.grabNumberOfVisibleElements('#coupon_code');
-    if (isCouponFieldVisible === 0) {
-        throw new Error('Coupon code input field not found.');
+async function checkCouponCode(I) {
+  const COUPON_CODE = '1902testqa';
+
+  I.say('Expanding discount section...');
+  await I.waitForElement('#block-discount-heading', 10);
+  await I.click('#block-discount-heading');
+  await I.wait(1); // Give time for animation
+
+  I.say('Running in-browser logic to check and apply coupon...');
+
+  const result = await I.executeScript((code) => {
+    const COUPON_CODE = code;
+
+    // === STEP 2: Check coupon field ===
+    const couponField = document.querySelector('#coupon_code');
+    if (!couponField) {
+      return { error: 'Coupon field #coupon_code not found' };
     }
 
-  // Get current value of coupon field
-    const couponValue = await I.grabValueFrom('#coupon_code');
+    const couponValue = couponField.value.trim();
     let shouldClickApply = false;
 
-    if (couponValue.trim() !== couponCode) {
-    I.fillField('#coupon_code', couponCode);
-    // Trigger input/change events using executeScript
-    await I.executeScript(() => {
-        const field = document.querySelector('#coupon_code');
-        if (field) {
-        field.dispatchEvent(new Event('input', { bubbles: true }));
-        field.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-    });
-    I.wait(1);
-    I.say(`Coupon set to ${couponCode}`);
-    shouldClickApply = true;
-    } else {
-    I.say(`Coupon already set to ${couponCode}`);
+    if (couponValue !== COUPON_CODE) {
+      couponField.focus();
+      couponField.value = COUPON_CODE;
+
+      // Trigger input/change events
+      couponField.dispatchEvent(new Event('input', { bubbles: true }));
+      couponField.dispatchEvent(new Event('change', { bubbles: true }));
+      shouldClickApply = true;
     }
 
-  // Click Apply button if needed
+    // === STEP 3: Click Apply button if needed ===
     if (shouldClickApply) {
-    // Use XPath to find the button
-    const applyBtnXPath = '//*[@id="discount-coupon-form"]/div/div[2]/div/button';
-    I.waitForElement(applyBtnXPath, 5);
-    I.scrollTo(applyBtnXPath);
-    I.click(applyBtnXPath);
-    I.say('Apply button clicked');
+      const applyBtn = document.evaluate(
+        '//*[@id="discount-coupon-form"]/div/div[2]/div/button',
+        document,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+      ).singleNodeValue;
+
+      if (applyBtn) {
+        applyBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        applyBtn.click();
+        return { applied: true };
+      } else {
+        return { error: 'Apply Coupon button not found' };
+      }
     }
+
+    return { applied: false };
+  }, COUPON_CODE);
+
+  // === Handle results ===
+  if (result?.error) {
+    throw new Error(result.error);
+  } else if (result.applied) {
+    I.say(`Coupon "${COUPON_CODE}" applied successfully.`);
+  } else {
+    I.say(`Coupon "${COUPON_CODE}" already set, no need to apply.`);
+  }
 }
+
 
 // ==================================================================================
 
@@ -62,7 +87,7 @@ async function checkoutMethod1(I) {
     I.say('Waiting for cart summary...');
     I.waitForElement('.cart-summary', 10);
 
-    await checkCouponCode(I, couponCode);
+    await checkCouponCode(I);
     I.wait(3);
 
     I.say('Clicking "Proceed to Checkout"...');
@@ -95,7 +120,7 @@ async function checkoutMethod1(I) {
     I.click(locate('button.action.action-cancel').withText('Annuller rabatkode'));
     i.wait(2);
 
-    //===================================================================================================
+    //==============================================================================================================
 
 
 
