@@ -1,4 +1,4 @@
-const { addToCart, addToCartMultiple } = require('../components/simple_addToCart');
+const { addToCartMultiple } = require('../components/simple_addToCart');
 const { loginCredentials } = require('../components/simple_userLogin');
 
 Feature('User Login');

@@ -13,7 +13,7 @@ exports.config = {
   helpers: {
     WebDriver: {
       url: 'https://imgwear246.1902dev1.com/',
-      browser: 'chrome',
+      browser: 'microsoftedge',
       windowSize: '1500x950',
     }
   },

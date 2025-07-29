@@ -2,7 +2,7 @@ const { checkoutMethod3, openCart, checkCouponCode} = require('../components/che
 const { loginCredentials } = require('../components/simple_userLogin');
 const { validateQuantityBtn } = require('../components/simple_addToCart');
 
-Feature('User Login');
+Feature('Checkout Item With HosImageWear Method');
 
 Scenario('User logs in with valid credentials and Add item to cart', async ({ I }) => {
     const { email, password } = codeceptjs.config.get().custom;
