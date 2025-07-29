@@ -138,8 +138,6 @@ async function checkoutMethod1(I, comment) {
     await I.waitForElement('th.mark span.discount.coupon', 10);
     I.say('Coupon code applied successfully.');
 
-    //==============================================================================================================
-
     I.say('Selecting Bambora payment method...');
     await scrollToCenter(I, '.label.bambora_payment_title');
     I.waitForElement('.label.bambora_payment_title', 10);
@@ -178,86 +176,110 @@ async function checkoutMethod1(I, comment) {
 
 // ==================================================================================
 // Shipping Method 2
-    async function checkoutMethod2(I) {
+//     async function checkoutMethod2(I) {
 
-    I.say('Waiting for cart summary...');
-    I.waitForElement('.cart-summary', 10);
+//     I.say('Clicking "Proceed to Checkout"...');
+//     I.click('[data-role="proceed-to-checkout"]');
+//     I.wait(5);
 
-    I.say('Clicking "Proceed to Checkout"...');
-    I.click('[data-role="proceed-to-checkout"]');
-    I.wait(5);
+//     I.say('Selecting GLS Erhverv shipping method...');
+//     I.waitForElement('#label_method_business_e_2_gls', 10);
+//     I.checkOption('#label_method_business_e_2_gls');
+//     I.wait(5);
 
-    I.say('Selecting GLS Erhverv shipping method...');
-    I.waitForElement('#label_method_business_e_2_gls', 10);
-    I.checkOption('#label_method_business_e_2_gls');
-    I.wait(5);
+//     I.fillField('#comments', 'testing');
+//     I.wait(2);
 
-    I.fillField('#comments', 'testing');
-    I.wait(2);
+//     I.say('Clicking the 3rd shipping address item regardless of content');
+//     I.click(locate('.shipping-address-item').at(3));
 
-    I.say('Clicking the 3rd shipping address item regardless of content');
-    I.click(locate('.shipping-address-item').at(3));
+//     I.wait(2);
 
-    I.wait(2);
+//     I.say('Selecting Bambora payment method...');
+//     I.waitForElement('.label.bambora_payment_title', 10);
+//     I.click('.label.bambora_payment_title');
+//     I.wait(3); 
 
-    I.say('Selecting Bambora payment method...');
-    I.waitForElement('.label.bambora_payment_title', 10);
-    I.click('.label.bambora_payment_title');
-    I.wait(3); 
+//     I.say('Agreeing to terms...');
+//     I.waitForElement('#agreement__1', 10);
+//     I.waitForVisible('#agreement__1', 5);
+//     I.checkOption('#agreement__1');
+//     I.wait(2);
 
-    I.say('Agreeing to terms...');
-    I.waitForElement('#agreement__1', 10);
-    I.waitForVisible('#agreement__1', 5);
-    I.checkOption('#agreement__1');
-    I.wait(2);
+//     I.say('Clicking "Place Order"... using JS click()');
+//     I.waitForElement('.place-order-primary button', 10);
+//     I.executeScript(() => {
+//         const button = document.querySelector('.place-order-primary button');
+//         if (button && !button.classList.contains('disabled')) {
+//             button.click();
+//         }
+//     });
+//     I.wait(20);
+// }
 
-    I.say('Clicking "Place Order"... using JS click()');
-    I.waitForElement('.place-order-primary button', 10);
-    I.executeScript(() => {
-        const button = document.querySelector('.place-order-primary button');
-        if (button && !button.classList.contains('disabled')) {
-            button.click();
-        }
-    });
-    I.wait(20);
-}
+
+
+
+
+
+
+
+
+
+
+
+
 
 // ==================================================================================
 // Shipping Method 3
-async function checkoutMethod3(I) {
-
-    I.say('Waiting for cart summary...');
-    I.waitForElement('.cart-summary', 10);
-
+async function checkoutMethod3(I, comment) {
     I.say('Clicking "Proceed to Checkout"...');
     I.click('[data-role="proceed-to-checkout"]');
     I.wait(5);
 
-    I.say('Selecting hos Imagewear - Østergade 5 - 5610 Assens shipping method...');
-    I.waitForElement('#label_carrier_flatrate_flatrate', 10);
+    I.say('Selecting GLS Parcelshop shipping method...');
+    await I.waitForElement('#label_carrier_flatrate_flatrate', 10);
+    await scrollToCenter(I, '#label_carrier_flatrate_flatrate');
     I.checkOption('#label_carrier_flatrate_flatrate');
     I.wait(5);
 
-    I.fillField('#comments', 'testing');
+    await scrollToCenter(I, '#comments');
+    I.fillField('#comments', comment);
+    I.wait(1);
+
+    await scrollToCenter(I, '#block-discount-heading');
+    I.click('#block-discount-heading');
+    I.wait(1);
+
+    await scrollToCenter(I, 'button.action.action-cancel');
+    I.click(locate('button.action.action-cancel').withText('Annuller rabatkode'));
     I.wait(2);
 
-    I.say('Clicking the 1st shipping address item regardless of content');
-    I.click(locate('.shipping-address-item').at(1));
-
+    await applyDiscount(I, '1902testqa');
     I.wait(2);
+
+    await scrollToCenter(I, '#discount-code');
+    await I.click(locate('button.action.action-apply').withText('Anvend rabatkode'));
+    I.wait(2);
+
+    await I.waitForElement('th.mark span.discount.coupon', 10);
+    I.say('Coupon code applied successfully.');
 
     I.say('Selecting Bambora payment method...');
+    await scrollToCenter(I, '.label.bambora_payment_title');
     I.waitForElement('.label.bambora_payment_title', 10);
     I.click('.label.bambora_payment_title');
     I.wait(3); 
 
     I.say('Agreeing to terms...');
+    await scrollToCenter(I, '#agreement__1');
     I.waitForElement('#agreement__1', 10);
     I.waitForVisible('#agreement__1', 5);
     I.checkOption('#agreement__1');
     I.wait(2);
 
     I.say('Clicking "Place Order"... using JS click()');
+    await scrollToCenter(I, '.place-order-primary button');
     I.waitForElement('.place-order-primary button', 10);
     I.executeScript(() => {
         const button = document.querySelector('.place-order-primary button');
@@ -265,11 +287,18 @@ async function checkoutMethod3(I) {
             button.click();
         }
     });
-    I.wait(20);
 }
+
+
+
+
+
+
+
+//Exporting the functions for use in other test files
 module.exports = {
     checkoutMethod1,
-    checkoutMethod2,
+    // checkoutMethod2,
     checkoutMethod3,
     checkCouponCode,
     applyDiscount,

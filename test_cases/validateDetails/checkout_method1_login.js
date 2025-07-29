@@ -6,9 +6,9 @@ Feature('Checkout Item With GLSPakkeshop Method');
 
 Scenario('User Logs, Add an item, Check Coupon Code, then Checkout using GLSPakkeshop Method', async ({ I }) => {
     const { email, password } = codeceptjs.config.get().custom;
-      const couponCode = '1902testqa';
-      const comment = 'this is a test order from 1902';
-      const productUrl = 'https://imgwear246.1902dev1.com/karlowsky-graa-tjenerforstykke.html';
+    const couponCode = '1902testqa';
+    const comment = 'this is a test order from 1902';
+    const productUrl = 'https://imgwear246.1902dev1.com/karlowsky-graa-tjenerforstykke.html';
 
     //login to website
     await loginCredentials(I, email, password);
