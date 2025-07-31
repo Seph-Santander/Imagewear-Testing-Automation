@@ -89,6 +89,18 @@ async function scrollToCenter(I, selector) {
   }, selector);
 }
 
+async function randomScrolltoCenter(I, xpathSelector) {
+  await I.executeScript((xpath) => {
+    const el = document
+      .evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
+      .singleNodeValue;
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, xpathSelector);
+}
+
+
 // ==================================================================================
 
 // Shipping Method GLSPakkeshop
@@ -303,5 +315,6 @@ module.exports = {
     checkCouponCode,
     applyDiscount,
     openCart,
-    scrollToCenter
+    scrollToCenter,
+    randomScrolltoCenter
 };

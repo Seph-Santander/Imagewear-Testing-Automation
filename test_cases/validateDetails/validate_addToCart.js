@@ -1,14 +1,14 @@
-const { addToCart } = require('../components/simple_addToCart');
+const { addToCart } = require('../components/addToCart_methods');
+const { dynamic_adding_item } = require('../components/dynamic_addToCart');
 const { loginCredentials } = require('../components/simple_userLogin');
 
 Feature('User Login');
 
 Scenario('User logs in with valid credentials and Add item to cart', async ({ I }) => {
-    const email = 'nineteen02merry@gmail.com';
-    const password = 'merry@190200';
+    const { email, password } = codeceptjs.config.get().custom;
 
-    const category = 'Køkken & Kantine- Kokketøj';
-    const product = "Karlowsky URBAN stone grey farvet forstykke";
+    const category = 'Elegante manager fodtøj';
+    const product = "";
 
 
 
@@ -17,5 +17,7 @@ Scenario('User logs in with valid credentials and Add item to cart', async ({ I 
 
     I.say('Login submitted. Waiting for dashboard...');
 
-    await addToCart(I, category, product)
+    await dynamic_adding_item(I, category, product)
+
+
 });

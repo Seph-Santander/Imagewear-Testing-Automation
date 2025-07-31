@@ -1,6 +1,6 @@
 const { checkoutMethod3, openCart, checkCouponCode} = require('../components/checkouts');
 const { loginCredentials } = require('../components/simple_userLogin');
-const { validateQuantityBtn } = require('../components/simple_addToCart');
+const { validateQuantityBtn } = require('../components/addToCart_methods');
 
 Feature('Checkout Item With HosImageWear Method');
 

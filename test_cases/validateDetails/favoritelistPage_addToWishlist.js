@@ -40,13 +40,40 @@ Scenario('User logs in with valid credentials and Add item to wishlist', async (
     I.wait(1);
 
     await scrollToCenter(I, 'Læg i kurv');
-    I.wait(1);
+    I.wait(20);
 
-    await inputQuantityBySize('C48', '1');
-    await inputQuantityBySize('C60', '1');
+    const size = 'C44';      // Target size
+
+  const quantity = '3';    // Desired quantity
 
 
-    
+  I.scrollTo('.product-add-form');
+
+
+  // Step 1: Locate the <th> with the given size and extract its data-value-index
+
+  const sizeCellXPath = `//table[@id="wk-product-matrix"]//thead//th[normalize-space(text())="${size}"]`;
+
+  const valueIndex = await I.grabAttributeFrom(sizeCellXPath, 'data-value-index');
+
+
+  // Step 2: Use JS to update the corresponding input field in <tbody>
+
+  await I.executeScript((valueIndex, quantity) => {
+
+    const input = document.querySelector(`input[name="matrix_qty[${valueIndex}]"]`);
+
+    if (input) {
+
+      input.value = quantity;
+
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+
+    }
+
+  }, valueIndex, quantity);
 
 //*[@id="wk-product-matrix"]/tbody/tr/td[2]
 
