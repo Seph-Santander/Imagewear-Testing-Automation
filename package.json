@@ -23,6 +23,7 @@
     "webdriverio": "^9.18.4"
   },
   "dependencies": {
-    "glob": "^11.0.3"
+    "glob": "^11.0.3",
+    "readline-sync": "^1.4.10"
   }
 }

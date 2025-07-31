@@ -89,16 +89,18 @@ async function scrollToCenter(I, selector) {
   }, selector);
 }
 
-async function randomScrolltoCenter(I, xpathSelector) {
+async function randomScrolltoCenter(I, productXpath) {
   await I.executeScript((xpath) => {
-    const el = document
+    const productEl = document
       .evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
       .singleNodeValue;
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    if (productEl) {
+      productEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-  }, xpathSelector);
+  }, productXpath);
 }
+
 
 
 // ==================================================================================
