@@ -1,11 +1,14 @@
 const { loginCredentials } = require('../components/simple_userLogin');
 const { OpenFavoritesPage } = require('../components/favorites');
-const { scrollToCenter } = require('../components/checkouts');
+const { scrollToCenter, checkoutMethod1, checkCouponCode } = require('../components/checkouts');
 
 Feature('Adding Item to Wishlist');
 
 Scenario('User logs in and adds item to wishlist with comment and quantity', async ({ I }) => {
   const { email, password } = codeceptjs.config.get().custom;
+  
+  const couponCode = '1902testqa';
+  const comment = 'this is a test order from 1902';
   const wishComment = 'this is my fave!';
 
   // Login
@@ -79,11 +82,37 @@ I.executeScript(() => {
   });
 });
 
+// Wait before submitting
+I.wait(2);
 
-I.wait(50);
+// ✅ Click "Læg i kurv" inside iframe
+await scrollToCenter(I, '#product-addtocart-button');
+I.waitForElement('#product-addtocart-button', 10);
+I.click('#product-addtocart-button');
 
+// Optional: wait for modal to close or page/cart update
+I.wait(5);
+
+await scrollToCenter(I, 'button[data-role="action"][data-action="confirm"]');
+I.waitForElement('button[data-role="action"][data-action="confirm"]', 10);
+I.click('button[data-role="action"][data-action="confirm"]');
+
+I.say('🛒 Confirmed: Clicked "Fortsæt med at shoppe".');
+
+I.wait(10);
+
+// ⬅️ Switch back to main document
 I.switchTo();
 
+I.wait(5);
+I.click('.action.viewcart');
 
+I.wait(5);
+
+  await checkCouponCode(I, couponCode);
+    I.wait(10);
+
+  await checkoutMethod1(I, comment);
+  I.wait(20);
 
 });
