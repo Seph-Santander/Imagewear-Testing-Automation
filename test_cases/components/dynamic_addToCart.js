@@ -80,7 +80,6 @@ async function pickRandomProduct(I) {
       await randomScrolltoCenter(I, randomXpath);
       await I.wait(1);
       I.click(randomXpath);
-      await I.wait(10);
       return true;
     } catch (e) {
       I.say(`❌ Error clicking random button: ${e.message}`);

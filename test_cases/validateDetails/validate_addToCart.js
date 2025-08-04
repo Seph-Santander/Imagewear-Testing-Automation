@@ -7,7 +7,7 @@ Feature('User Login');
 
 // Ask tester for inputs BEFORE scenario
 const category = 'Hotel- og Restaurantskolen - HRS';
-const product = '';
+const product = 'Sorte Kokkeknapper 12stk';
 
 Scenario('User logs in with valid credentials and adds item to cart', async ({ I }) => {
   const { email, password } = codeceptjs.config.get().custom;
