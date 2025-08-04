@@ -22,12 +22,9 @@ Scenario('User Logs, Add an item, Check Coupon Code, then Checkout using GLSPakk
     I.amOnPage(productUrl);
     I.wait(1);
 
-
-    await dynamic_adding_item(I, category, product);
+    // Adding Product while validating Quantity Button
+    await validateQuantityBtn(I);
     I.wait(5);
-    // // Adding Product while validating Quantity Button
-    // await validateQuantityBtn(I);
-    // I.wait(5);
 
     //Opening Cart
     I.wait(2);

@@ -6,7 +6,7 @@ const { loginCredentials } = require('../components/simple_userLogin');
 Feature('User Login');
 
 // Ask tester for inputs BEFORE scenario
-const category = 'Sikkerhedssko til Transport og Lager';
+const category = 'Hotel- og Restaurantskolen - HRS';
 const product = '';
 
 Scenario('User logs in with valid credentials and adds item to cart', async ({ I }) => {
@@ -20,4 +20,5 @@ Scenario('User logs in with valid credentials and adds item to cart', async ({ I
 
   I.say('✅ Logged in. Proceeding to add item...');
   await dynamic_adding_item(I, category, product);
+  I.wait(20);
 });

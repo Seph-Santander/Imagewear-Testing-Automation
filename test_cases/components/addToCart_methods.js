@@ -118,14 +118,21 @@ async function addToCartMultiple(I, category, subcategories, productname) {
 };
 
 async function validateQuantityBtn(I) {
+  I.say('Clicking increment button...');
   I.click(locate('.qty-inc'));
   I.wait(1);
 
+  I.say('Waiting for add-to-cart button to appear...');
+  I.waitForElement('#product-addtocart-button', 10); // Wait up to 10 seconds
+
   I.say('Validating quantity increment button...');
-  I.click('#product-addtocart-button');
+  I.seeElement('#product-addtocart-button'); // Confirm it exists
+
+  I.click('#product-addtocart-button'); // Now click it
 
   I.say('Validating that the quantity has been incremented...');
 }
+
 
 module.exports = {
   addToCart,

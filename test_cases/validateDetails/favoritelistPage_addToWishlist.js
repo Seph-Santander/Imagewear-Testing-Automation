@@ -93,24 +93,22 @@ I.click('#product-addtocart-button');
 // Optional: wait for modal to close or page/cart update
 I.wait(5);
 
-await scrollToCenter(I, 'button[data-role="action"][data-action="confirm"]');
-I.waitForElement('button[data-role="action"][data-action="confirm"]', 10);
-I.click('button[data-role="action"][data-action="confirm"]');
+  await scrollToCenter(I, 'button[data-role="action"][data-action="confirm"]');
+  I.waitForElement('button[data-role="action"][data-action="confirm"]', 10);
+  I.click('button[data-role="action"][data-action="confirm"]');
 
-I.say('🛒 Confirmed: Clicked "Fortsæt med at shoppe".');
-
-I.wait(10);
+  I.say('🛒 Confirmed: Clicked "Fortsæt med at shoppe".');
+  I.switchTo();
+  I.wait(15);
 
 // ⬅️ Switch back to main document
-I.switchTo();
+  
+  I.click('.action.viewcart');
 
-I.wait(5);
-I.click('.action.viewcart');
-
-I.wait(5);
+  I.wait(5);
 
   await checkCouponCode(I, couponCode);
-    I.wait(10);
+    I.wait(5);
 
   await checkoutMethod1(I, comment);
   I.wait(20);
