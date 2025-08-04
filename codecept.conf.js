@@ -14,7 +14,7 @@ exports.config = {
     WebDriver: {
       url: 'https://imgwear246.1902dev1.com/',
       browser: 'chrome',
-      windowSize: '1500x950',
+      windowSize: '1920x1080',
     }
   },
   include: {

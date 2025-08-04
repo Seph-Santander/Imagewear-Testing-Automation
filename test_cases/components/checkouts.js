@@ -107,8 +107,12 @@ async function randomScrolltoCenter(I, productXpath) {
 
 // Shipping Method GLSPakkeshop
 async function checkoutMethod1(I, comment) {
-    I.say('Clicking "Proceed to Checkout"...');
+
+    I.say('Scrolling and clicking "Proceed to Checkout"...');
+    await scrollToCenter(I, '[data-role="proceed-to-checkout"]');
+    I.waitForElement('[data-role="proceed-to-checkout"]', 10);
     I.click('[data-role="proceed-to-checkout"]');
+
     I.wait(5);
 
     I.say('Selecting GLS Parcelshop shipping method...');
@@ -122,6 +126,7 @@ async function checkoutMethod1(I, comment) {
     I.fillField('#gls-parcelshop-postcode', '3000');
     I.wait(2);
 
+    I.say('Selecting Parcelshop location...');
     I.executeScript(() => {
         const select = document.querySelector('#gls-parcelshop-pickup-id');
         if (select && select.options.length >= 3) {
@@ -130,18 +135,22 @@ async function checkoutMethod1(I, comment) {
         }
     });
 
+    I.say('Adding order comment...');
     await scrollToCenter(I, '#comments');
     I.fillField('#comments', comment);
     I.wait(1);
 
+    I.say('Opening discount section...');
     await scrollToCenter(I, '#block-discount-heading');
     I.click('#block-discount-heading');
     I.wait(1);
 
+    I.say('Cancelling old discount (if any)...');
     await scrollToCenter(I, 'button.action.action-cancel');
     I.click(locate('button.action.action-cancel').withText('Annuller rabatkode'));
     I.wait(2);
 
+    I.say('Applying discount code...');
     await applyDiscount(I, '1902testqa');
     I.wait(2);
 
@@ -175,6 +184,7 @@ async function checkoutMethod1(I, comment) {
         }
     });
 }
+
 
 
 

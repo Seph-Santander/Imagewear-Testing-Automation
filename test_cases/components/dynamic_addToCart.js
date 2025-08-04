@@ -39,18 +39,17 @@ async function dynamic_adding_item(I, category, product) {
 
     if (loadMoreVisible > 0) {
       I.say('🔄 Scrolling to and clicking "Load more"...');
-      await scrollToCenter(I, '.btn-load-more'); // ✅ Using CSS-based scroll
+      await scrollToCenter(I, '.btn-load-more');
       await I.wait(1);
       I.click('.btn-load-more');
-      I.wait(3); // Adjust wait time if needed
+      I.wait(7); // Wait for new items to load
     } else {
-      I.say(`❌ No more products to load. Product "${product}" not found.`);
+      I.say(`❌ No more products to load. Product "${product}" not found.`)
       break;
     }
   }
 
-  I.say('⚠️ Falling back to random product selection...');
-
+  // 🔁 Random fallback
   const addToCartButtons = await I.grabNumberOfVisibleElements('//button[@title="Læg i kurv"]');
   if (addToCartButtons > 0) {
     const randomIndex = Math.floor(Math.random() * addToCartButtons) + 1;

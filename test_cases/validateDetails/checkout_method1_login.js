@@ -1,6 +1,7 @@
 const { checkoutMethod1, openCart, checkCouponCode} = require('../components/checkouts');
 const { loginCredentials } = require('../components/simple_userLogin');
 const { validateQuantityBtn } = require('../components/addToCart_methods');
+const { dynamic_adding_item } = require('../components/dynamic_addToCart');
 
 Feature('Checkout Item With GLSPakkeshop Method');
 
@@ -9,6 +10,9 @@ Scenario('User Logs, Add an item, Check Coupon Code, then Checkout using GLSPakk
     const couponCode = '1902testqa';
     const comment = 'this is a test order from 1902';
     const productUrl = 'https://imgwear246.1902dev1.com/karlowsky-graa-tjenerforstykke.html';
+    
+    const category = 'Til bordet';
+    const product = '';
 
     //login to website
     await loginCredentials(I, email, password);
@@ -18,12 +22,14 @@ Scenario('User Logs, Add an item, Check Coupon Code, then Checkout using GLSPakk
     I.amOnPage(productUrl);
     I.wait(1);
 
-    // Adding Product while validating Quantity Button
-    await validateQuantityBtn(I);
+
+    await dynamic_adding_item(I, category, product);
     I.wait(5);
+    // // Adding Product while validating Quantity Button
+    // await validateQuantityBtn(I);
+    // I.wait(5);
 
     //Opening Cart
-    await openCart(I);
     I.wait(2);
     I.say('Waiting for cart summary...');
     I.waitForElement('.cart-summary', 10);
@@ -31,7 +37,7 @@ Scenario('User Logs, Add an item, Check Coupon Code, then Checkout using GLSPakk
 
     //Checking Coupon Code || Applying Coupon Code
     await checkCouponCode(I, couponCode);
-    I.wait(3);
+    I.wait(10);
 
     // Proceeding to Checkout GLSPakkeshop
     await checkoutMethod1(I, comment);

@@ -6,8 +6,8 @@ const { loginCredentials } = require('../components/simple_userLogin');
 Feature('User Login');
 
 // Ask tester for inputs BEFORE scenario
-const category = readline.question('Enter the category: ');
-const product = readline.question('Enter the product name (leave blank for random): ');
+const category = 'Sikkerhedssko til Transport og Lager';
+const product = '';
 
 Scenario('User logs in with valid credentials and adds item to cart', async ({ I }) => {
   const { email, password } = codeceptjs.config.get().custom;

@@ -20,10 +20,6 @@ async function inputQuantityBySize(size, quantity) {
   I.fillField(inputSelector, quantity);
 }
 
-
-
-
-
 module.exports = {
     OpenFavoritesPage,
     inputQuantityBySize
