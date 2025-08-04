@@ -15,55 +15,75 @@ Scenario('User logs in and adds item to wishlist with comment and quantity', asy
   // Open Wishlist page
   await OpenFavoritesPage(I);
 
-  // Filter by category: "Hoved kategori" > "Steward"
+  // Filter by category
   I.click('//button[./span[text()="Hoved kategori"]]');
   I.waitForElement('//button[./span[text()="Steward"]]', 10);
   I.click('//button[./span[text()="Steward"]]');
   I.wait(2);
 
-  // Add comment to a specific product
+  // Add comment
   const commentSelector = '#product-item-comment-102376';
   await scrollToCenter(I, commentSelector);
   I.fillField(commentSelector, wishComment);
 
   // Update wishlist
   await scrollToCenter(I, 'button[title="Opdater ønskeliste"]');
-  I.click('button[title="Opdater ønskeliste"]');
+  I.wait(1);
+  I.forceClick('button[title="Opdater ønskeliste"]');
   I.wait(3);
 
-  // Reload wishlist page
+  // Reload
   I.amOnPage('https://imgwear246.1902dev1.com/wishlist/');
-  I.say('Reloading the wishlist page to verify the comment was saved');
   I.wait(3);
-
-  // Filter category again after reload
   I.click('//button[./span[text()="Steward"]]');
   I.wait(3);
-
-  // Confirm comment is still there
   await scrollToCenter(I, commentSelector);
   I.seeInField(commentSelector, wishComment);
 
-  // Open configuration modal
+  // Open modal
   await scrollToCenter(I, 'Vælg størrelse');
   I.click('Vælg størrelse');
+  I.waitForElement('.mfp-content', 10);
 
-  // Wait for modal to appear
-  I.waitForElement('.mfp-content', 60);
-  I.say('Modal appeared.');
+  // Wait for the iframe to be present
+I.waitForElement('iframe.mfp-iframe', 10);
 
-  // Use updated selector for quantity input
-  const quantityInput = '//*[@data-attribute-position="1043"]';
-  I.waitForElement(quantityInput, 60);
-  I.say('Quantity input field is visible.');
+// Switch into iframe context
+I.switchTo('iframe.mfp-iframe');
 
-  await scrollToCenter(I, quantityInput);
+// Now interact with the input field inside the iframe
+I.waitForElement('input[name="matrix_qty[1043]"]', 10);
+await scrollToCenter(I, 'input[name="matrix_qty[1043]"]');
+I.fillField('input[name="matrix_qty[1043]"]', '1');
 
-  // Interact with quantity input inside modal
-  within('.mfp-content', () => {
-    I.click(quantityInput);
-    I.fillField(quantityInput, '1');
+I.waitForElement('input[name="matrix_qty[1044]"]', 10);
+await scrollToCenter(I, 'input[name="matrix_qty[1044]"]');
+I.fillField('input[name="matrix_qty[1044]"]', '1');
+
+// Optionally trigger change
+I.executeScript(() => {
+  const inputs = [
+    document.querySelector('input[name="matrix_qty[1043]"]'),
+    document.querySelector('input[name="matrix_qty[1044]"]')
+  ];
+
+  inputs.forEach((input, index) => {
+    if (input) {
+      input.value = '1'; // Set value to 1
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+      console.log(`✅ Input ${index + 1} updated and events dispatched.`);
+    } else {
+      console.warn(`⚠️ Input ${index + 1} not found.`);
+    }
   });
+});
 
-  I.say('Set quantity to 1 inside modal.');
+
+I.wait(50);
+
+I.switchTo();
+
+
+
 });
