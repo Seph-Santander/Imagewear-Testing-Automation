@@ -294,6 +294,8 @@ async function checkoutMethod3(I, comment) {
     });
 }
 
+
+
 //Exporting the functions for use in other test files
 module.exports = {
     checkoutMethod1,

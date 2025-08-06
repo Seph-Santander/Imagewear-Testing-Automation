@@ -1,5 +1,5 @@
-const { loginCredentials } = require('../components/simple_userLogin');
-const { OpenFavoritesPage } = require('../components/favorites');
+const { loginCredentials } = require('../../components/simple_userLogin');
+const { OpenFavoritesPage } = require('../../components/favorites');
 
 
 Feature('User Login');

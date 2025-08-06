@@ -1,6 +1,6 @@
-const { loginCredentials } = require('../components/simple_userLogin');
-const { scrollToCenter } = require('../components/checkouts');
-const { clickFavoriteAddToCartByIndex, fillQtyInputs } = require('../components/addToCart_methods');
+const { loginCredentials } = require('../../components/simple_userLogin');
+const { scrollToCenter } = require('../../components/checkouts');
+const { clickFavoriteAddToCartByIndex, fillQtyInputs } = require('../../components/addToCart_methods');
 
 Feature('Validate Sections');
 

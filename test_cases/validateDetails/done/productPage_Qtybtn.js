@@ -1,5 +1,5 @@
-const { loginCredentials } = require('../components/simple_userLogin');
-const { validateQuantityBtn } = require('../components/addToCart_methods');
+const { loginCredentials } = require('../../components/simple_userLogin');
+const { validateQuantityBtn } = require('../../components/addToCart_methods');
 
 Feature('Product Page Quantity Button Validation');
 
@@ -14,5 +14,4 @@ Scenario('Validating Product Page Quantity Button', async ({ I }) => {
     I.wait(1);
     await validateQuantityBtn(I);
     I.wait(5);
-
 });
