@@ -5,8 +5,7 @@ Feature('User Login');
 
 Scenario('User logs in with valid credentials and Add item to cart', async ({ I }) => {
 
-    const email = 'nineteen02merry@gmail.com';
-    const password = 'merry@190200';
+    const { email, password } = codeceptjs.config.get().custom;
 
     const category = 'Køkken & Kantine- Kokketøj';
     const subcategories = 'Kokkejakker';

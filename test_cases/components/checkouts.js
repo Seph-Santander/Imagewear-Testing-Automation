@@ -82,11 +82,12 @@ async function applyDiscount(I, couponCode) {
 }
 
 // Utility function to scroll an element to center of the screen
-async function scrollToCenter(I, selector) {
-  await I.executeScript((sel) => {
-    const el = document.querySelector(sel);
+async function scrollToCenter(I, xpath) {
+  await I.executeScript((xp) => {
+    const result = document.evaluate(xp, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+    const el = result.singleNodeValue;
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, selector);
+  }, xpath);
 }
 
 async function randomScrolltoCenter(I, productXpath) {
@@ -184,16 +185,6 @@ async function checkoutMethod1(I, comment) {
         }
     });
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -302,12 +293,6 @@ async function checkoutMethod3(I, comment) {
         }
     });
 }
-
-
-
-
-
-
 
 //Exporting the functions for use in other test files
 module.exports = {

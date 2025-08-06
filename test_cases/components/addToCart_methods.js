@@ -1,4 +1,5 @@
 //simple Adding Product to Cart
+const { scrollToCenter } = require('./checkouts');
 
 async function addToCart(I, category, productname) {
 
@@ -133,9 +134,98 @@ async function validateQuantityBtn(I) {
   I.say('Validating that the quantity has been incremented...');
 }
 
+// utils/sliderAddToCart.js
+async function clickFavoriteAddToCartByIndex(I, productName) {
+  const containerXPath = '//*[@id="favorite-product"]/div/div/div[1]/div';
+  const productCardXPath = `${containerXPath}//div[contains(@class, 'product-item')]`;
+
+  const arrowRightSelector = '.porto-icon-angle-right';
+  const arrowLeftSelector = '.porto-icon-angle-left';
+
+  const seenProducts = new Set();
+  const maxScrolls = 15;
+
+  I.say(`🔍 Searching for product: "${productName}"`);
+
+  async function tryScroll(direction = 'left') {
+    const arrowSelector = direction === 'right' ? arrowRightSelector : arrowLeftSelector;
+
+    for (let scrollCount = 0; scrollCount < maxScrolls; scrollCount++) {
+      let newProductFound = false;
+
+      const productCount = await I.executeScript((xp) => {
+        const result = document.evaluate(xp, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        return result.snapshotLength;
+      }, productCardXPath);
+
+      for (let i = 1; i <= productCount; i++) {
+        const nameXPath = `(${productCardXPath})[${i}]//a[contains(@class, 'product-item-link')]`;
+        const addToCartXPath = `(${productCardXPath})[${i}]//button[contains(@class, 'tocart')]`;
+
+        const isVisible = await I.grabNumberOfVisibleElements(nameXPath);
+        if (!isVisible) continue;
+
+        const name = await I.grabTextFrom(nameXPath);
+
+        if (!seenProducts.has(name)) {
+          newProductFound = true;
+          seenProducts.add(name);
+          I.say(`👁️ Checking product: ${name}`);
+
+          if (name.includes(productName)) {
+            I.say(`✅ Found: "${name}"`);
+            await scrollToCenter(I, nameXPath);
+            await I.wait(1);
+            await I.click(addToCartXPath);
+            return true;
+          }
+        }
+      }
+
+      if (!newProductFound) {
+        I.say(`⚠️ No new products found during ${direction} scroll step ${scrollCount + 1}.`);
+        return false;
+      }
+
+      I.say(`${direction === 'right' ? '➡️' : '⬅️'} Clicking ${direction} arrow (step ${scrollCount + 1})...`);
+      const isArrowVisible = await I.grabNumberOfVisibleElements(arrowSelector);
+      if (isArrowVisible) {
+        await I.click(arrowSelector);
+        await I.wait(1.5);
+      } else {
+        I.say(`❌ ${direction} arrow not visible.`);
+        return false;
+      }
+    }
+
+    return false;
+  }
+
+  const foundRight = await tryScroll('right');
+  if (foundRight) return;
+
+  I.say(`🔄 Redirecting to left scroll...`);
+  const foundLeft = await tryScroll('left');
+  if (foundLeft) return;
+
+  throw new Error(`❌ Product "${productName}" not found after scrolling both directions.`);
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 module.exports = {
   addToCart,
   addToCartMultiple,
-  validateQuantityBtn
+  validateQuantityBtn,
+  clickFavoriteAddToCartByIndex
 };
