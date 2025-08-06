@@ -1,5 +1,5 @@
-const { loginCredentials } = require('../components/simple_userLogin');
-const { ValidateFooter } = require('../components/footer');
+const { loginCredentials } = require('../../components/simple_userLogin');
+const { ValidateFooter } = require('../../components/footer');
 
 
 Feature('User Login');

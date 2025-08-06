@@ -32,7 +32,7 @@ Scenario('User Logs, Add an item, Check Coupon Code, then Checkout using GLSPakk
     I.waitForElement('.cart-summary', 10);
 
 
-    //Checking Coupon Code || Applying Coupon Code
+    // Checking Coupon Code || Applying Coupon Code
     await checkCouponCode(I, couponCode);
     I.wait(10);
 

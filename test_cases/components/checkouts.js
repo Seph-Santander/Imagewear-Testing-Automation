@@ -82,13 +82,23 @@ async function applyDiscount(I, couponCode) {
 }
 
 // Utility function to scroll an element to center of the screen
-async function scrollToCenter(I, xpath) {
-  await I.executeScript((xp) => {
-    const result = document.evaluate(xp, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
-    const el = result.singleNodeValue;
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, xpath);
+async function scrollToCenter(I, selector, isXPath = true) {
+  await I.executeScript((sel, useXPath) => {
+    try {
+      let el;
+      if (useXPath) {
+        const result = document.evaluate(sel, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+        el = result.singleNodeValue;
+      } else {
+        el = document.querySelector(sel);
+      }
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (e) {
+      console.error('Selector error:', sel, e);
+    }
+  }, selector, isXPath);
 }
+
 
 async function randomScrolltoCenter(I, productXpath) {
   await I.executeScript((xpath) => {
@@ -110,7 +120,6 @@ async function randomScrolltoCenter(I, productXpath) {
 async function checkoutMethod1(I, comment) {
 
     I.say('Scrolling and clicking "Proceed to Checkout"...');
-    await scrollToCenter(I, '[data-role="proceed-to-checkout"]');
     I.waitForElement('[data-role="proceed-to-checkout"]', 10);
     I.click('[data-role="proceed-to-checkout"]');
 
