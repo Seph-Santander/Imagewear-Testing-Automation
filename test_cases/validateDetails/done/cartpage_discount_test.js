@@ -26,7 +26,7 @@ Scenario('Validating Product Page Quantity Button', async ({ I }) => {
     I.wait(5);
     await applyCouponIfNeeded(I, couponCode);
     I.wait(5);
-    // await clickCancelCouponButton(I);
+    
     await CartchangeQuantity(I, "decrease", 1);
     I.wait(5);
 
