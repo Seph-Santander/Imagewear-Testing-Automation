@@ -1,7 +1,7 @@
-const { checkoutMethod1, openCart, checkCouponCode} = require('../components/checkouts');
-const { loginCredentials } = require('../components/simple_userLogin');
-const { validateQuantityBtn } = require('../components/addToCart_methods');
-const { dynamic_adding_item } = require('../components/dynamic_addToCart');
+const { checkoutMethod1, openCart, checkCouponCode} = require('../../components/checkouts');
+const { loginCredentials } = require('../../components/simple_userLogin');
+const { validateQuantityBtn } = require('../../components/addToCart_methods');
+const { dynamic_adding_item } = require('../../components/dynamic_addToCart');
 
 Feature('Checkout Item With GLSPakkeshop Method');
 

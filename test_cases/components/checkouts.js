@@ -72,6 +72,19 @@ async function checkCouponCode(I, couponCode) {
     I.say(`Coupon "${COUPON_CODE}" already set, no need to apply.`);
   }
 }
+// scroll element to center of the screen
+async function scrollElementToCenter(I, selector) {
+  await I.executeScript((sel) => {
+    const el = document.querySelector(sel);
+    if (el) {
+      const rect = el.getBoundingClientRect();
+      const absoluteElementTop = rect.top + window.pageYOffset;
+      const middle = absoluteElementTop - (window.innerHeight / 2) + (rect.height / 2);
+      window.scrollTo({ top: middle, behavior: 'smooth' });
+    }
+  }, selector);
+}
+
 
 //apply Discount in Checkout
 
@@ -303,6 +316,254 @@ async function checkoutMethod3(I, comment) {
     });
 }
 
+// adding bones inputs 
+async function fillBonesInputsAndApplyCoupon(I) {
+  const bonesSelector = 'input[name="cartoption[bones]"]';
+
+  // === STEP 1: Wait for and fill bones inputs ===
+  I.waitForElement(bonesSelector, 10);
+
+  const bonesCount = await I.executeScript(() => {
+    return document.querySelectorAll('input[name="cartoption[bones]"]').length;
+  });
+
+  if (bonesCount === 0) {
+    throw new Error('❌ No bones input fields found.');
+  }
+
+  console.log(`✅ Found ${bonesCount} bones input(s)`);
+
+  for (let i = 0; i < bonesCount; i++) {
+    const currentValue = await I.executeScript((index) => {
+      const el = document.querySelectorAll('input[name="cartoption[bones]"]')[index];
+      return el ? el.value.trim() : null;
+    }, i);
+
+    if (currentValue !== '1902 test') {
+      console.log(`🦴 Filling bones input ${i + 1}`);
+
+      await I.executeScript(async (index) => {
+        const input = document.querySelectorAll('input[name="cartoption[bones]"]')[index];
+        if (input) {
+          // Smooth scroll to center
+          input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+          // Wait for scroll animation to finish
+          await new Promise(resolve => setTimeout(resolve, 600));
+
+          input.focus();
+          input.value = '1902 test';
+
+          // Trigger reactive events
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }, i);
+
+      I.wait(2); // optional pause
+    } else {
+      console.log(`✅ Bones input ${i + 1} already has "1902 test", skipping`);
+    }
+  }
+}
+
+async function applyCouponIfNeeded(I, COUPON_CODE = '1902testqa') {
+  const couponSelector = '#coupon_code';
+  const applyButtonXPath = '//*[@id="discount-coupon-form"]/div/div[2]/div/button';
+
+  // === STEP 1: Wait for coupon input field ===
+  I.waitForElement(couponSelector, 10);
+
+  // === STEP 2: Check and set coupon code if needed ===
+  const currentCoupon = await I.executeScript(() => {
+    const el = document.querySelector('#coupon_code');
+    return el ? el.value.trim() : null;
+  });
+
+  if (currentCoupon === null) {
+    throw new Error('❌ Coupon field #coupon_code not found');
+  }
+
+  let shouldClickApply = false;
+
+  if (currentCoupon !== COUPON_CODE) {
+    console.log(`🔄 Setting coupon to "${COUPON_CODE}"`);
+
+    await I.executeScript((code) => {
+      const field = document.querySelector('#coupon_code');
+      if (field) {
+        field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        setTimeout(() => {
+          field.focus();
+          field.value = code;
+          field.dispatchEvent(new Event('input', { bubbles: true }));
+          field.dispatchEvent(new Event('change', { bubbles: true }));
+        }, 300); // minor delay to simulate typing
+      }
+    }, COUPON_CODE);
+
+    I.wait(1);
+    shouldClickApply = true;
+  } else {
+    console.log(`✅ Coupon already set to "${COUPON_CODE}"`);
+  }
+
+  // === STEP 3: Click "Apply" button if needed ===
+  if (shouldClickApply) {
+    I.waitForElement(applyButtonXPath, 10);
+    const buttonExists = await I.executeScript((xpath) => {
+      const result = document.evaluate(
+        xpath,
+        document,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+      );
+      return !!result.singleNodeValue;
+    }, applyButtonXPath);
+
+    if (!buttonExists) {
+      throw new Error('❌ Apply Coupon button not found');
+    }
+
+    await I.executeScript((xpath) => {
+      const result = document.evaluate(
+        xpath,
+        document,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+      );
+      const btn = result.singleNodeValue;
+      if (btn) {
+        btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => btn.click(), 300);
+      }
+    }, applyButtonXPath);
+
+    console.log('✅ Apply button clicked');
+  }
+}
+
+
+async function clickCancelCouponButton(I) {
+  const cancelButtonXPath = '//button[@type="button" and contains(@class, "cancel") and contains(.,"Annuller rabatkode")]';
+
+  // Wait for the button to be present
+  I.waitForElement(cancelButtonXPath, 10);
+
+  const buttonExists = await I.executeScript((xpath) => {
+    const result = document.evaluate(
+      xpath,
+      document,
+      null,
+      XPathResult.FIRST_ORDERED_NODE_TYPE,
+      null
+    );
+    return !!result.singleNodeValue;
+  }, cancelButtonXPath);
+
+  if (!buttonExists) {
+    throw new Error('❌ Cancel Coupon button not found');
+  }
+
+  // Scroll into view and click
+  await I.executeScript((xpath) => {
+    const result = document.evaluate(
+      xpath,
+      document,
+      null,
+      XPathResult.FIRST_ORDERED_NODE_TYPE,
+      null
+    );
+    const btn = result.singleNodeValue;
+    if (btn) {
+      btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => btn.click(), 300);
+    }
+  }, cancelButtonXPath);
+
+  console.log('✅ Cancel Coupon button clicked');
+}
+
+/**
+ * Changes the quantity by clicking increase/decrease buttons,
+ * scrolls into view, prevents over-decrease, and updates the cart.
+ *
+ * @param {CodeceptJS.I} I - CodeceptJS actor
+ * @param {'increase'|'decrease'} action - Action to perform
+ * @param {number} count - How many times to click
+ * @param {string} inputSelector - Selector for the input field (default: 'input.qty')
+ * @param {string} updateButtonSelector - Selector for the update button (default: '.action.update')
+ */
+async function CartchangeQuantity(I, action, count, inputSelector = 'input.qty', updateButtonSelector = '.action.update') {
+  const selectorMap = {
+    increase: '.qty-inc',
+    decrease: '.qty-dec',
+  };
+
+  const buttonSelector = selectorMap[action];
+  if (!buttonSelector) {
+    throw new Error('Invalid action. Use "increase" or "decrease".');
+  }
+
+  I.waitForElement(inputSelector, 5);
+
+  let currentQty = 1;
+  try {
+    const val = await I.grabValueFrom(inputSelector);
+    currentQty = parseInt(val, 10) || 1;
+  } catch (err) {
+    console.warn(`⚠️ Cannot read value from ${inputSelector}, assuming 1`);
+  }
+
+  let clicksToMake = count;
+
+  if (action === 'decrease') {
+    const minQty = 1;
+    const maxDecreases = currentQty - minQty;
+
+    if (maxDecreases <= 0) {
+      console.log(`Already at minimum quantity (${minQty}), skipping decrease.`);
+      return;
+    }
+
+    clicksToMake = Math.min(count, maxDecreases);
+  }
+
+  for (let i = 0; i < clicksToMake; i++) {
+    I.waitForElement(buttonSelector, 5);
+
+    await I.executeScript((sel) => {
+      const el = document.querySelector(sel);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+      }
+    }, buttonSelector);
+
+    I.waitForVisible(buttonSelector, 5);
+    I.click(buttonSelector);
+    I.wait(0.2); // wait for UI update (optional)
+  }
+
+  // Scroll and click the update button
+  I.waitForElement(updateButtonSelector, 5);
+
+  await I.executeScript((sel) => {
+    const el = document.querySelector(sel);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+    }
+  }, updateButtonSelector);
+
+  I.waitForVisible(updateButtonSelector, 5);
+  I.click(updateButtonSelector);
+}
+
+
+
+
 
 
 //Exporting the functions for use in other test files
@@ -314,5 +575,10 @@ module.exports = {
     applyDiscount,
     openCart,
     scrollToCenter,
-    randomScrolltoCenter
+    randomScrolltoCenter,
+    scrollElementToCenter,
+    fillBonesInputsAndApplyCoupon,
+    applyCouponIfNeeded,
+    clickCancelCouponButton,
+    CartchangeQuantity
 };

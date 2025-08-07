@@ -1,6 +1,6 @@
-const { loginCredentials } = require('../components/simple_userLogin');
-const { OpenFavoritesPage } = require('../components/favorites');
-const { scrollToCenter, checkoutMethod1, checkCouponCode } = require('../components/checkouts');
+const { loginCredentials } = require('../../components/simple_userLogin');
+const { OpenFavoritesPage } = require('../../components/favorites');
+const { scrollToCenter, checkoutMethod1, checkCouponCode } = require('../../components/checkouts');
 
 Feature('Adding Item to Wishlist');
 
