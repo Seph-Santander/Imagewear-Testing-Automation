@@ -2,11 +2,14 @@ const { loginCredentials } = require('../../components/simple_userLogin');
 const { ValidateFooter } = require('../../components/footer');
 
 
-Feature('User Login');
+Feature('Validating Footer to Different Part of Website');
 
-Scenario('User logs in with valid credentials', async ({ I }) => {
+Scenario('User logs in with valid credentials and Asserting that the Footer All Rights Reserved is present', async ({ I }) => {
   const { email, password } = codeceptjs.config.get().custom;
 
+  //==========================================================================================================================
+  
+  //Asserting that the Footer All Rights Reserved is Present to Different Part of Website
   await loginCredentials(I, email, password);
   I.say('Login submitted. Waiting for dashboard...');
 
@@ -48,6 +51,6 @@ Scenario('User logs in with valid credentials', async ({ I }) => {
 
   I.click('//*[@title="Brands"]');
   await ValidateFooter(I);
-I.wait(10);
+  I.wait(10);
 
 });

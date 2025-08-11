@@ -2,16 +2,27 @@ const { loginCredentials } = require('../../components/simple_userLogin');
 const { scrollToCenter } = require('../../components/checkouts');
 const { fillQtyInputs } = require('../../components/addToCart_methods');
 
-Feature('User Login');
+Feature('Validating Product Page Slider');
 
-Scenario('User logs in and clicks product info tabs with smooth animation', async ({ I }) => {
+Scenario('User logs and Asserting the Detajler, Specifikationer, Related posts Tabs ', async ({ I }) => {
     const { email, password } = codeceptjs.config.get().custom;
 
-    // Login
-    await loginCredentials(I, email, password);
-    I.say('🔐 Login submitted.');
+    // Helper function for smooth scroll with callback wait
+    async function smoothScroll(I, selector) {
+        await I.executeAsyncScript((selector, done) => {
+            const el = document.querySelector(selector);
+            if (!el) return done(false);
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => done(true), 800);
+        }, selector);
+    }
 
-    // Go to product page
+  //==========================================================================================================================
+
+    // User Login
+    await loginCredentials(I, email, password);
+
+    // Redirect to product page
     I.amOnPage('https://imgwear246.1902dev1.com/sort-kokkeskjorte-kortaermet.html');
     I.wait(3);
 
@@ -19,41 +30,31 @@ Scenario('User logs in and clicks product info tabs with smooth animation', asyn
     await scrollToCenter(I, '//*[@id="description"]');
     I.wait(1);
 
-    // 📌 Helper function for smooth scroll with callback wait
-    async function smoothScroll(I, selector) {
-        await I.executeAsyncScript((selector, done) => {
-            const el = document.querySelector(selector);
-            if (!el) return done(false);
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            // Wait 800ms to simulate smooth animation
-            setTimeout(() => done(true), 800);
-        }, selector);
-    }
-
-    // 🔘 Click "Specifikationer" tab
-    I.say('🧪 Clicking "Specifikationer" tab...');
+    // Click "Specifikationer" tab
+    I.say('Clicking "Specifikationer" tab...');
     await smoothScroll(I, '#tab-label-additional-title');
     I.waitForElement('#tab-label-additional-title', 10);
     I.click('#tab-label-additional-title');
     I.wait(3);
 
-    // 🔘 Click "Related Posts" tab
-    I.say('📚 Clicking "Related Posts" tab...');
+    // Click "Related Posts" tab
+    I.say('Clicking "Related Posts" tab...');
     await smoothScroll(I, '#tab-label-related\\.post\\.tab-title');
     I.waitForElement('#tab-label-related\\.post\\.tab-title', 10);
     I.forceClick('#tab-label-related\\.post\\.tab-title');
     I.wait(3);
 
-    // 🔘 Click "Detaljer" tab
-    I.say('📄 Clicking "Detaljer" tab...');
+    // Click "Detaljer" tab
+    I.say('Clicking "Detaljer" tab...');
     await smoothScroll(I, '#tab-label-description-title');
     I.waitForElement('#tab-label-description-title', 10);
     I.click('#tab-label-description-title');
     I.wait(5);
 
     await scrollToCenter(I, '//*[@id="product-container-amasty"]/div');
-    // 🔘 Click carousel dots alternately
-    I.say('🎯 Clicking carousel dots alternately...');
+
+    // Clicking the Radio Button
+    I.say('Clicking carousel dots alternately...');
 
     const dotSelector = '.owl-dot';
 
@@ -69,16 +70,16 @@ Scenario('User logs in and clicks product info tabs with smooth animation', asyn
                 dots[index].click();
             }
         }, i);
-        I.wait(2); // small delay to see the effect
+        I.wait(2);
 }
     I.wait(10);
-
-    await fillQtyInputs(I, 2, 1); // Fill quantity inputs with 2 for the first product
+    
+    //Filling Quantity Value to Specific Input Field 
+    await fillQtyInputs(I, 2, 1);//Parameter: (I, [Number of Input Field in the Product Page], Quantity Value)
     I.wait(10);
     
-    I.say('Clicking "Læg i kurv" for the first product...');
-    I.seeElement('#product-addtocart-button'); // Confirm it exists
-
-    I.click('#product-addtocart-button'); // Now click it
+    //Clicking Add to Cart Button
+    I.seeElement('#product-addtocart-button');
+    I.click('#product-addtocart-button');
     I.wait(10);
 });

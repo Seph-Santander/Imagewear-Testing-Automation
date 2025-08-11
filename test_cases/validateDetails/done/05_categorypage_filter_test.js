@@ -1,30 +1,41 @@
 const { loginCredentials } = require('../../components/simple_userLogin');
 const { scrollElementToCenter } = require('../../components/checkouts');
 
-Feature('User Login');
+Feature('Validating Catergory Page, Filter by Color and Category Name');
 
-Scenario('User logs in with valid credentials and adds item to cart', async ({ I }) => {
+Scenario('User logs in with valid credentials and Filter by Color and Category Name', async ({ I }) => {
     const { email, password } = codeceptjs.config.get().custom;
 
+  //==========================================================================================================================
+    //User Login
     await loginCredentials(I, email, password);
 
+    //Go to Specific Category Page
     I.amOnPage('https://imgwear246.1902dev1.com/hotel-restaurant-toej/kokketoej-udstyr.html');
     I.wait(5);
 
+    //Asserting if theres 24 product diplayed on the first page
     await scrollElementToCenter(I, '.limiter-options');
     I.wait(3);
+
+    //Asserting See More Button and Click it
     await scrollElementToCenter(I, '.btn-load-more');
     I.wait(3);
     I.click('.btn-load-more');
     I.wait(3);
+
+    //Asserting Filter Section and Sorting it by Color Black
     await scrollElementToCenter(I, 'div[data-role="ln_title"]', 'Farve');
     I.wait(3);
     await scrollElementToCenter(I, '.filter-options-content div[data-option-tooltip-value="#000000"]');
     I.wait(1);
     I.click('.filter-options-content div[data-option-tooltip-value="#000000"]');
     I.wait(5);
+
     await scrollElementToCenter(I, '.btn-load-more');
     I.wait(3);
+
+    //Asserting Filter Section and Sorting it by Kokketrøje Category
     await scrollElementToCenter(I, 'div[data-role="ln_title"]', 'Farve');
     I.wait(1);
     await scrollElementToCenter(I, 'div[data-role="ln_title"]', 'Produkt');
@@ -33,6 +44,8 @@ Scenario('User logs in with valid credentials and adds item to cart', async ({ I
     I.wait(3);
     I.click(locate('.filter-options-content li.item').withDescendant(locate('a').withText('Kokketrøje')).find('input[type="checkbox"]'));
     I.wait(5);
+
+    //Clicking Remove Filter
     await scrollElementToCenter(I, 'span', 'Fjern alle');
     I.wait(2); 
     I.click(locate('span').withText('Fjern alle'));

@@ -317,7 +317,7 @@ async function checkoutMethod3(I, comment) {
 }
 
 // adding bones inputs 
-async function fillBonesInputsAndApplyCoupon(I) {
+async function fillBonesInputsAndApplyCoupon(I, productCouponCode) {
   const bonesSelector = 'input[name="cartoption[bones]"]';
 
   // === STEP 1: Wait for and fill bones inputs ===
@@ -339,7 +339,7 @@ async function fillBonesInputsAndApplyCoupon(I) {
       return el ? el.value.trim() : null;
     }, i);
 
-    if (currentValue !== '1902 test') {
+    if (currentValue !== productCouponCode) {
       console.log(`🦴 Filling bones input ${i + 1}`);
 
       await I.executeScript(async (index) => {
@@ -352,7 +352,7 @@ async function fillBonesInputsAndApplyCoupon(I) {
           await new Promise(resolve => setTimeout(resolve, 600));
 
           input.focus();
-          input.value = '1902 test';
+          input.value = productCouponCode;
 
           // Trigger reactive events
           input.dispatchEvent(new Event('input', { bubbles: true }));
@@ -362,7 +362,7 @@ async function fillBonesInputsAndApplyCoupon(I) {
 
       I.wait(2); // optional pause
     } else {
-      console.log(`✅ Bones input ${i + 1} already has "1902 test", skipping`);
+      console.log(`✅ Bones input ${i + 1} already has ${productCouponCode}, skipping`);
     }
   }
 }

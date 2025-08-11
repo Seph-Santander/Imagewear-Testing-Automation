@@ -1,18 +1,18 @@
 const { loginCredentials } = require('../../components/simple_userLogin');
-const assert = require('assert');
 
-Feature('User Login');
+Feature('Search Bar Validation');
 
-Scenario('User logs in, searches for item, checks checkbox, navigates', async ({ I }) => {
+Scenario('User logs in, search f', async ({ I }) => {
     const { email, password } = codeceptjs.config.get().custom;
 
-    // Login
+    //==========================================================================================================================
+    //User Login
     await loginCredentials(I, email, password);
 
     // Search for "sko"
     I.fillField('#search', 'sko');
     I.waitForElement('.mst-searchautocomplete__index-title', 15);
-    I.wait(5); // reduce this if stable
+    I.wait(5);
     I.pressKey('Enter');
 
     // Wait and click "Load More"
@@ -43,11 +43,11 @@ Scenario('User logs in, searches for item, checks checkbox, navigates', async ({
 
     // Scroll to and assert product sorting text
     await scrollToText(I, 'Sorter efter');
-    I.see('Sorter efter', '.mst-search__index-content'); // more flexible
+    I.see('Sorter efter', '.mst-search__index-content');
 
-    I.wait(20); // optional visual pause
+    I.wait(20);
 });
-
+//==========================================================================================================================
 
 // Scroll using CSS selector string
 async function scroll(I, selector) {
@@ -60,6 +60,7 @@ async function scroll(I, selector) {
         }
     }, selector);
 }
+
 
 // Scroll to any element using text (XPath)
 async function scrollToText(I, text) {
