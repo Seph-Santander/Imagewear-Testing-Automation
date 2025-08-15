@@ -21,4 +21,5 @@ Scenario('User logs in with valid credentials', async ({ I }) => {
 
   //Asserting and Clicking Favorite Page
   await OpenFavoritesPage(I);
+  I.wait(20);
 });

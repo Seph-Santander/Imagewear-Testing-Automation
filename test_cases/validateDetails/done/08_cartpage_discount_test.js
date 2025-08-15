@@ -33,7 +33,7 @@ Scenario('Validating Product Page Quantity Button', async ({ I }) => {
 
     //Check if theres already Coupon code, then Input if none
     await applyCouponIfNeeded(I, couponCode);
-    I.wait(5);
+    I.wait(10);
     
     //Increase or Decrease Quantity Value of the product
     await CartchangeQuantity(I, "decrease", 1);// Parameter: (I, [decrease, increase], [number of clicks])
